@@ -63,7 +63,7 @@ int subsys_filter(const SubsystemCollection *src, SubsystemCollection *dest, con
     }
     filtering = ~filtering;
     for (size_t i=0;i<src->size;i++){
-        if (~((src->subsystems[i].status ^ filtering) | wildcard)==0){
+        if (((src->subsystems[i].status ^ filtering) | wildcard)==0xFF){
             subsys_append(dest, &src->subsystems[i]);
         }
     }
