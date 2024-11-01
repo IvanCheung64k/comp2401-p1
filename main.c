@@ -21,9 +21,11 @@ int main(void) {
     SubsystemCollection collection;
     subsys_collection_init (&collection);
     Subsystem subsys;
+    SubsystemCollection FilterColl;
+    subsys_collection_init(&FilterColl);
     char name[MAX_STR];
     unsigned char status;
-    unsigned int choice;
+    unsigned int choice = 1; // This is assigned a number because it would otherwise default to 0, and would immediately exit the while loop since MENU_EXIT is also 0
     unsigned char value;
     unsigned int find;
     unsigned int data;
@@ -34,20 +36,68 @@ int main(void) {
         if (print_menu(&choice)==ERR_SUCCESS){
             switch (choice){
                 case MENU_ADD:
-                    scanf("%s", &name);
-                    subsys_init(&subsys, &name, 0);
-                    subsys_append(&collection, &subsys);
+                    printf("Enter subsystem name (no spaces): ");
+                    scanf("%s", name);
+                    subsys_init(&subsys, name, 0);
+                    if (subsys_append(&collection, &subsys)==ERR_MAX_CAPACITY){
+                        printf("The subsystem collection has reached maximum capacity");
+                    }
                     break;
                 case MENU_PRINT:
-                    subsys_print(&subsys);
+                    printf("Enter the name of the subsystem to be printed: ");
+                    scanf("%s",name);
+                    find = subsys_find(&collection, name);
+                    if (find != ERR_SYS_NOT_FOUND){                
+                        subsys_print(&subsys);                    
+                    }
+                    else {
+                        printf("No such subsystem found");
+                    }
                     break;
                 case MENU_PRINTALL:
                     subsys_collection_print(&collection);
                     break;
                 case MENU_STATUS:
-                    scanf("%s %d %d", &name, &status, &value);
-                    find = subsys_find(&collection, &name);
-
+                    printf("Enter: <Subsystem name> <Status ID:7,6,5,4,2,0> <New value(0-3)>:");
+                    scanf("%s %hhu %hhu", name, &status, &value);
+                    find = subsys_find(&collection, name);
+                    if (find != ERR_SYS_NOT_FOUND && subsys_status_set(&collection.subsystems[find], status, value) != ERR_INVALID_STATUS){
+                        printf("Status updated successfully");
+                    }
+                    else{
+                        printf("No such subsystem found");
+                    }
+                    break;
+                case MENU_DATA:
+                    printf("Enter: <Subsystem Name> <Hex value without 0X>:");
+                    scanf("%s, %x", name, &data);
+                    find = subsys_find(&collection, name);
+                    if (find != ERR_SYS_NOT_FOUND){                
+                        subsys_data_set(&collection.subsystems[find], data, &collection.subsystems[find].data);
+                        printf("Data entered successfully");         
+                    }
+                    else {
+                        printf("No such subsystem found");
+                    }
+                case MENU_REMOVE:
+                    printf("Enter the index of a subsystem to be removed:");
+                    scanf("%d", &index);
+                    remove=subsys_remove(&collection, index);
+                    if (remove == ERR_INVALID_INDEX){
+                        printf ("Invalid index entered");
+                    }
+                    else if (remove == ERR_NO_DATA){
+                        printf ("No subsystems in the collection to be removed");
+                    }
+                    else{
+                        printf ("Subsystem removed successfully");
+                    }
+                case MENU_FILTER:
+                    printf("Enter a string of length 8 (Valid characters are: 0,1,*):");
+                    scanf("%s", &filter);
+                    subsys_filter(&collection, &FilterColl, &filter);
+                    printf("Subsystems filtered: %d", FilterColl.size);
+                    subsys_collection_print(&FilterColl);
                     break;
                 default:
                     break;
