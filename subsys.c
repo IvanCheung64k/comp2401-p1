@@ -54,7 +54,7 @@ int subsys_print(Subsystem *subsystem){
 */
 int subsys_status_set(Subsystem *subsystem, unsigned char status, unsigned char value){
     if (value >= 2){
-        if (status==0 || status == 2){ //Todo: when trying to edit populated 2-bit, ends up not depopulating correctly
+        if (status==STATUS_PERFORMANCE || status == STATUS_RESOURCE){ //Todo: when trying to edit populated 2-bit, ends up not depopulating correctly
                                        //Solved: missed case of value < 2, therefore going to else statement, therefore only editing one bit
             subsystem->status = subsystem->status & ~(1<<status);
             subsystem->status = subsystem->status & ~(1<<(status+1));
@@ -66,7 +66,7 @@ int subsys_status_set(Subsystem *subsystem, unsigned char status, unsigned char 
         }
     }
     else{
-        if (status==1 || status==3){
+        if (status==(STATUS_PERFORMANCE+1) || status==(STATUS_RESOURCE+1)){
             return ERR_INVALID_STATUS;
         }
         else if (status==0 || status == 2){
