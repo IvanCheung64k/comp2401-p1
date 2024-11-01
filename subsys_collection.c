@@ -123,7 +123,7 @@ int subsys_remove(SubsystemCollection *subsystems, int index){
 int subsys_filter(const SubsystemCollection *src, SubsystemCollection *dest, const unsigned char *filter){
     unsigned char filtering=0;
     unsigned char wildcard=0;
-    for (size_t i =0; i<8;i++){
+    for (size_t i =0; i<strlen(filter);i++){
         if (filter[i]=='1'){
             filtering = filtering | (1 << 7-i);
         }

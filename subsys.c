@@ -76,13 +76,14 @@ int subsys_status_set(Subsystem *subsystem, unsigned char status, unsigned char 
         if (status==(STATUS_PERFORMANCE+1) || status==(STATUS_RESOURCE+1)){
             return ERR_INVALID_STATUS;
         }
-        else if (status==0 || status == 2){
+        else if (status==STATUS_PERFORMANCE || status == STATUS_RESOURCE){
             subsystem->status = subsystem->status & ~(1<<status);
             subsystem->status = subsystem->status & ~(1<<(status+1));
             subsystem->status = subsystem->status | (value<<status);
             return ERR_SUCCESS;
         }
         else{
+            subsystem->status = subsystem->status & ~(1<<status);
             subsystem->status = subsystem->status | (value<<status);
             return ERR_SUCCESS;
         }
@@ -136,9 +137,9 @@ int subsys_data_set(Subsystem *subsystem, unsigned int new_data, unsigned int *o
 
 */
 int subsys_data_get(Subsystem *subsystem, unsigned int *dest){
-    if (subsystem->status & (1<<STATUS_DATA)){
+    if (subsystem->status && (1<<STATUS_DATA)){
         *dest = subsystem->data;
-        subsystem->status = subsystem->status & ~(1<<STATUS_DATA);
+        subsys_status_set(subsystem, STATUS_DATA, 0);
         subsystem->data = 0;
         return ERR_SUCCESS;
     }

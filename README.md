@@ -11,4 +11,4 @@ in a collection where they are stored in a array in which it can be added to, re
 4. from the same directory, run './p1' to execute the project.
 
 ## Credits
-    - Solely developped by Ivan Cheung (101312122)
+    - Solely developed by Ivan Cheung (101312122)
