@@ -25,7 +25,7 @@ int subsys_init(Subsystem *subsystem, const char *name, char status){
     return ERR_SUCCESS;
 }
 /*
-    Prints out the name of a subsystem and it's statuses
+    Prints out the name of a subsystem, it's statuses and data
 
     in: *subsystem, a Struct containing a name (string), status (unsigned char), and data (unsigned char)
 
@@ -33,8 +33,15 @@ int subsys_init(Subsystem *subsystem, const char *name, char status){
         ERR_SUCCESS
 */
 int subsys_print(Subsystem *subsystem){
+    unsigned int dest;
     printf("\n-[Name: %16s, ", subsystem->name);
     subsys_status_print(subsystem);
+    if (subsys_data_get(subsystem, &dest)!=ERR_NO_DATA){
+        printf(", Data: 0x%08x", dest);
+    }
+    else {
+        printf(", Data: 0");
+    }
     return ERR_SUCCESS;
 }
 /*
